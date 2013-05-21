@@ -71,6 +71,28 @@ public class PersonDaoIT extends BaseIT {
 
 	}
 
+	@Test
+	public void testDeleteAll() throws Exception {
+		transactor.perform(new UnitOfWork() {
+			@Override
+			public void work() throws Exception {
+				Person p = new Person();
+				p.setName("namePatata");
+				p.setEmail("mail3");
+				dao.insert(p);
+				p.setName("namePatata2");
+				p.setEmail("mail33");
+				dao.insert(p);
+				p.setName("namePatata5");
+				p.setEmail("mail36");
+				dao.insert(p);
+				dao.deleteAll();
+				assertEquals(0, dao.count());
+			}
+		});
+
+	}
+
 	@After
 	public void tearDownTest() throws Exception {
 		transactor.perform(new UnitOfWork() {
