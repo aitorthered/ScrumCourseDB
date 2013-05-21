@@ -14,8 +14,14 @@ public class PersonDaoIT extends BaseIT {
 	private PersonDao dao;
 
 	@Before
-	public void setDao() {
+	public void setDao() throws Exception {
 		dao = new PersonDao(em);
+		transactor.perform(new UnitOfWork() {
+			@Override
+			public void work() throws Exception {
+				dao.deleteAll();
+			}
+		});
 	}
 
 	@Test
@@ -31,6 +37,38 @@ public class PersonDaoIT extends BaseIT {
 			}
 		});
 		assertEquals(count + 1, dao.count());
+	}
+
+	@Test
+	public void testSamePersonTwiceToDDBB() throws Exception {
+		int count = dao.count();
+		transactor.perform(new UnitOfWork() {
+			@Override
+			public void work() throws Exception {
+				Person p = new Person();
+				p.setName("namePatata");
+				p.setEmail("mailPatata");
+				dao.insert(p);
+				dao.insert(p);
+			}
+		});
+		assertEquals(count + 1, dao.count());
+	}
+
+	@Test
+	public void testFind() throws Exception {
+		transactor.perform(new UnitOfWork() {
+			@Override
+			public void work() throws Exception {
+				Person p = new Person();
+				p.setName("namePatata");
+				p.setEmail("mail3");
+				dao.insert(p);
+				p = dao.findByEmail("mail3");
+				assertEquals("namePatata", p.getName());
+			}
+		});
+
 	}
 
 	@After
