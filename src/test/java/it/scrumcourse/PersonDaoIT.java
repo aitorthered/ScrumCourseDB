@@ -2,6 +2,7 @@ package it.scrumcourse;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,51 +19,56 @@ public class PersonDaoIT extends BaseIT {
 	}
 
 	@Test
-	public void newUserNoTrx() {
-		Person p = new Person();
-		p.setName("name");
-		p.setEmail("mail");
-		dao.insert(p);
-		dao.insert(p);
-		assertEquals(0, dao.count());
-	}
-
-	@Test
-	public void newUserTrx() {
-		em.getTransaction().begin();
-		Person p = new Person();
-		p.setName("name2");
-		p.setEmail("mail2");
-		dao.insert(p);
-		assertEquals(1, dao.count());
-		em.getTransaction().commit();
-		assertEquals(1, dao.count());
-	}
-
-	@Test
-	public void newUserTrxUnitOfWork() throws Exception {
+	public void testAddNewUserToDDBB() throws Exception {
+		int count = dao.count();
 		transactor.perform(new UnitOfWork() {
 			@Override
 			public void work() throws Exception {
 				Person p = new Person();
-				p.setName("name3");
-				p.setEmail("mail3");
+				p.setName("namePatata");
+				p.setEmail("mailPatata");
 				dao.insert(p);
-				assertEquals(2, dao.count());
 			}
 		});
-		assertEquals(2, dao.count());
+		assertEquals(count + 1, dao.count());
 	}
 
-	@Test
-	public void testFind() throws Exception {
+	@After
+	public void tearDownTest() throws Exception {
 		transactor.perform(new UnitOfWork() {
 			@Override
 			public void work() throws Exception {
-				Person p = dao.findByEmail("mail3");
-				assertEquals("name3", p.getName());
+				dao.deleteAll();
 			}
 		});
-
 	}
+
+	// @Test
+	// public void newUserTrxUnitOfWork() throws Exception {
+	// transactor.perform(new UnitOfWork() {
+	// @Override
+	// public void work() throws Exception {
+	// Person p = new Person();
+	// p.setName("name3");
+	// p.setEmail("mail3");
+	// dao.insert(p);
+	// assertEquals(2, dao.count());
+	// }
+	// });
+	// assertEquals(2, dao.count());
+	// }
+	//
+	// @Test
+	// public void testFind() throws Exception {
+	// transactor.perform(new UnitOfWork() {
+	// @Override
+	// public void work() throws Exception {
+	// Person p = dao.findByEmail("mail3");
+	// assertEquals("name3", p.getName());
+	// }
+	// });
+	//
+	// }
+	//
+
 }

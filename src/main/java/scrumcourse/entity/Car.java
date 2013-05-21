@@ -16,20 +16,27 @@ public class Car {
 	private Car() {
 	}
 
-	@Override public String toString() {
-		return toStringHelper(this).omitNullValues().add("make", make).add("model", model).toString();
+	@Override
+	public String toString() {
+		return toStringHelper(this).omitNullValues().add("make", make)
+				.add("model", model).toString();
 	}
 
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		return Objects.hash(make, model, color, year);
 	}
 
-	@Override public boolean equals(Object obj) {
-		if (obj == null || getClass() != obj.getClass())
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
+		}
 		Car other = (Car) obj;
-		return Objects.equals(make, other.make) && Objects.equals(model, other.model)
-				&& Objects.equals(color, other.color) && Objects.equals(year, other.year);
+		return Objects.equals(make, other.make)
+				&& Objects.equals(model, other.model)
+				&& Objects.equals(color, other.color)
+				&& Objects.equals(year, other.year);
 	}
 
 	public int hashCodeEclipse() {
@@ -43,30 +50,40 @@ public class Car {
 	}
 
 	public boolean equalsEclipse(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Car other = (Car) obj;
 		if (color == null) {
-			if (other.color != null)
+			if (other.color != null) {
 				return false;
-		} else if (!color.equals(other.color))
+			}
+		} else if (!color.equals(other.color)) {
 			return false;
+		}
 		if (make == null) {
-			if (other.make != null)
+			if (other.make != null) {
 				return false;
-		} else if (!make.equals(other.make))
+			}
+		} else if (!make.equals(other.make)) {
 			return false;
+		}
 		if (model == null) {
-			if (other.model != null)
+			if (other.model != null) {
 				return false;
-		} else if (!model.equals(other.model))
+			}
+		} else if (!model.equals(other.model)) {
 			return false;
-		if (year != other.year)
+		}
+		if (year != other.year) {
 			return false;
+		}
 		return true;
 	}
 
