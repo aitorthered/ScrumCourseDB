@@ -1,6 +1,7 @@
 package it.scrumcourse;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -8,14 +9,32 @@ import org.junit.Test;
 
 import scrumcourse.dao.PersonDao;
 import scrumcourse.entity.Person;
+import scrumcourse.exception.DaoException;
 
 public class PersonDaoIT extends BaseIT {
+	/**
+	 * -Se añade Una persona a la BBD - Que no se añade un duplicado - Busqueda
+	 * de algo que existe - Probar el deleteAll - Busqueda de algo que nunca se
+	 * metio - Busqueda de algo que se borró antes - Test busqueda con la base
+	 * vacia - Se borra algo que existe - Se borra algo ya borrado - Se borra
+	 * algo que no se introdujo - Se borra con la BD vacia
+	 */
 
 	private PersonDao dao;
 
 	@Before
 	public void setDao() throws Exception {
 		dao = new PersonDao(em);
+		transactor.perform(new UnitOfWork() {
+			@Override
+			public void work() throws Exception {
+				dao.deleteAll();
+			}
+		});
+	}
+
+	@After
+	public void tearDownTest() throws Exception {
 		transactor.perform(new UnitOfWork() {
 			@Override
 			public void work() throws Exception {
@@ -93,14 +112,19 @@ public class PersonDaoIT extends BaseIT {
 
 	}
 
-	@After
-	public void tearDownTest() throws Exception {
+	@Test(expected = DaoException.class)
+	public void testSearchSomethingNeverInserted() throws Exception {
 		transactor.perform(new UnitOfWork() {
 			@Override
 			public void work() throws Exception {
-				dao.deleteAll();
+				Person p = new Person();
+				p.setName("namePatata");
+				p.setEmail("mail3");
+				dao.insert(p);
+				p = dao.findByEmail("mail4");
 			}
 		});
+		fail();
 	}
 
 	// @Test
